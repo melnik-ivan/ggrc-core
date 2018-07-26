@@ -81,7 +81,14 @@ class TestSlugPrefix(unittest.TestCase):
         sorted(set(all_prefixes))
     )
 
-  @ddt.data("*BAD-SLUG", "BAD**SLUG", "BAD-SLUG*")
+  @ddt.data(
+      "*BAD-SLUG",
+      "BAD**SLUG",
+      "BAD-SLUG*",
+      " BAD-SLUG",
+      "BAD-SLUG ",
+      " BAD-SLUG ",
+  )
   def test_bad_slug_validation(self, bad_slug):
     """Test slug validation with bad value"""
     self.assertRaises(
