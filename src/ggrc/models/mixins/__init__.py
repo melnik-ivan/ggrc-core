@@ -545,6 +545,10 @@ class Slugged(Base):
       raise exceptions.ValidationError(
           "Field 'Code' contains unsupported symbol '*'"
       )
+    if value and value != value.strip():
+      raise exceptions.ValidationError(
+          "Field 'Code' contains unsupported leading or trailing whitespace"
+      )
     return value
 
   @classmethod
