@@ -24,6 +24,7 @@ def strip_spaces_ensure_uniq(tables, field, uniq_tables):
     )
     records = {record.id: record.value for record in records}
     uniq_values = set(records.values())
+    queries = []
     for rec_id, rec_value in records.iteritems():
       stripped_value = rec_value if rec_value is None else rec_value.strip()
       if stripped_value != rec_value:
@@ -34,10 +35,16 @@ def strip_spaces_ensure_uniq(tables, field, uniq_tables):
             new_value = '{} ({})'.format(stripped_value, index)
             index += 1
           uniq_values.add(new_value)
-        connection.execute(
-            text(
-                'UPDATE {} SET {} = :val WHERE id = :id'.format(table, field)
-            ),
-            val=new_value,
-            id=rec_id
+        queries.append(
+            {
+                'text': 'UPDATE {} SET {} = :val WHERE id = :id'.format(
+                    table, field
+                ),
+                'val': new_value,
+                'id': rec_id
+            }
         )
+    # reversed needed to avoid errors when uniq_table
+    # contains some values like this ' data', 'data '.
+    for query in reversed(queries):
+      connection.execute(text(query['text']), val=query['val'], id=query['id'])
