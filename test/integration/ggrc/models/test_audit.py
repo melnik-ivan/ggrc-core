@@ -168,8 +168,8 @@ class TestAudit(TestCase):
     self.assertIsNotNone(snapshot)
     self.assertIsNotNone(relationships)
 
-  def test_slug_validation(self):
-    """Test slug with leading or trailing spaces"""
+  def test_slug_validation_create(self):
+    """Test post slug with leading space"""
     response = self.api.post(all_models.Audit, [{
         "audit": {
             "title": "Some Audit",
@@ -177,7 +177,18 @@ class TestAudit(TestCase):
             "slug": " BAD-SLUG"
         }
     }])
-    expected_data = '[[400, "Field \'Code\' contains unsupported ' \
-                    'leading or trailing whitespace"]]'
+    expected_data = "[[400, \"Field 'Code' contains unsupported " \
+                    "leading or trailing whitespace\"]]"
+    self.assert400(response)
+    self.assertEqual(expected_data, response.data)
+
+  def test_slug_validation_update(self):
+    """Test put slug with trailing space"""
+    with factories.single_commit():
+      valid_audit = factories.AuditFactory(slug="GOOD-SLUG")
+
+    response = self.api.put(valid_audit, {"slug": "BAD-SLUG "})
+    expected_data = "{\"message\": \"Field 'Code' contains unsupported " \
+                    "leading or trailing whitespace\", \"code\": 400}"
     self.assert400(response)
     self.assertEqual(expected_data, response.data)
