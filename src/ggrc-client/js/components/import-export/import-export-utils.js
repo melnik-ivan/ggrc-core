@@ -72,6 +72,19 @@ export const exportRequest = (request) => {
   });
 };
 
+export const downloadTemplate = (request) => {
+  return $.ajax({
+    type: 'POST',
+    headers: $.extend({
+      'Content-Type': 'application/json',
+      'X-export-view': 'blocks',
+      'X-requested-by': 'GGRC',
+    }, request.headers || {}),
+    url: '/_service/export_csv_template',
+    data: JSON.stringify(request.data || {}),
+  });
+};
+
 export const analyseBeforeImport = (fileId) => {
   return request(`/api/people/${currentUserId}/imports`, 'POST', {id: fileId});
 };
