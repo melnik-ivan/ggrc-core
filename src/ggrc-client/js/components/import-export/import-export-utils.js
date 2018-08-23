@@ -59,18 +59,6 @@ export const deleteExportJob = (jobId) => {
   return request(`/api/people/${currentUserId}/exports/${jobId}`, 'DELETE');
 };
 
-export const exportRequest = (request) => {
-  return $.ajax({
-    type: 'POST',
-    headers: $.extend({
-      'Content-Type': 'application/json',
-      'X-export-view': 'blocks',
-      'X-requested-by': 'GGRC',
-    }, request.headers || {}),
-    url: '/_service/export_csv',
-    data: JSON.stringify(request.data || {}),
-  });
-};
 
 export const downloadTemplate = (request) => {
   return $.ajax({
